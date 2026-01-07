@@ -1,0 +1,1 @@
+<EnterpriseConfig status="production" version="2.4" xmlnssys="123"><Metadata><ClusterName>Global-Cloud-Alpha</ClusterName><UpdateTimestamp>2023-10-27T10:30:00Z</UpdateTimestamp><Administrator id="admin-001"><Name>Zhang San</Name><Email>zhangsan@example.com</Email><Privileges><Role>SuperUser</Role><Role>BillingAdmin</Role></Privileges></Administrator></Metadata></EnterpriseConfig>
