@@ -26,7 +26,8 @@ namespace yazi {
         friend class Singleton<classname>;                      \
         public:                                                 \
             classname & operator = (const classname &) = delete;\
-            classname(const classname &)  = delete              \
+            classname(const classname &)  = delete;             \
+            classname() = default
 
     }
 }

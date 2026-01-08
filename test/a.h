@@ -6,18 +6,22 @@
 #define NETWORK_STUDY_A_H
 #include <iostream>
 
-#include "../utility/singleton.h"
+#include "../reflect/class_register.h"
 
-using namespace yazi::utility;
+using namespace yazi::reflect;
 
 
-class A {
-    SINGLETON(A);
+class A : public Object {
 public:
-    void show() {
-        std::cout << "A" << std::endl;
+    A():m_name("A"),m_age(18) {
     }
+    ~A() {}
+public:
+    std::string m_name;
+    int m_age;
 };
 
-
+REGISTER_CLASS(A);
+REGISTER_CLASS_FIELD(A,m_name,std::string);
+REGISTER_CLASS_FIELD(A,m_age,int);
 #endif //NETWORK_STUDY_A_H

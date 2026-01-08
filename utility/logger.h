@@ -40,7 +40,6 @@ namespace yazi {
         class Logger {
             SINGLETON(Logger);
         private:
-            Logger() = default;
             ~Logger();
         public:
             enum Level {

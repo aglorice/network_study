@@ -31,4 +31,8 @@ add_executable(network_study main.cpp
         serialize/data_stream.cpp
         serialize/serializable.h
         serialize/serializable.cpp
+        reflect/class_factory.h
+        reflect/class_factory.cpp
+        reflect/class_register.h
+        reflect/class_field.h
 )

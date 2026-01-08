@@ -1,33 +1,44 @@
-#include <iostream>
-#include "serialize/data_stream.h"
+#include <functional>
+#include "reflect/class_factory.h"
+#include "test/a.h"
 
-using namespace yazi::serialize;
+using namespace yazi::reflect;
 
-class A : public Serializable {
+class Test {
 public:
-   A() = default;
-   A(std::string name,int age): m_age(age),m_name(name) {
-   }
-   ~A() = default;
-   SERIALIZE(m_name,m_age)
+   Test() = default;
+   ~Test() = default;
 
-   void show() const {
-      std::cout << "name = " << m_name << ", age = " << m_age;
+   void foo() {
+      std::cout << "Test::foo" << std::endl;
    }
-private:
-   std::string m_name;
-   int m_age;
 };
+
+typedef std::function<void(Test*)> test_method;
+
 
 
 
 int main(int argc,char *argv[]) {
+   auto factory = Singleton<ClassFactory>::instance();
+   Object *a = factory->create_class("A");
 
-   DataStream ds;
-   A a2;
-   ds.load("./../a.out");
-   ds >> a2;
-   a2.show();
+   std::string name;
+   int age;
 
+   a->set<std::string>("m_name","aglorice");
+   a->set<int>("m_age",17);
+   a->get<std::string>("m_name",name);
+   a->get<int>("m_age",age);
+   std::cout << age << std::endl;
+   std::cout << name << std::endl;
+
+   test_method method = &Test::foo;
+
+   Test t;
+   // method(&t);
+   // 这里是将指向成员函数的指针的类型改成uintptr_t，再由后面转会原来的类型在解引用调用该函数
+   uintptr_t ptr = (uintptr_t)&method;
+   (*(test_method*)(ptr))(&t);
    return 0;
 }
