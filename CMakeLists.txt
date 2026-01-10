@@ -35,4 +35,5 @@ add_executable(network_study main.cpp
         reflect/class_factory.cpp
         reflect/class_register.h
         reflect/class_field.h
+        reflect/class_method.h
 )

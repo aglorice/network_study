@@ -4,6 +4,7 @@
 
 #ifndef NETWORK_STUDY_CLASS_REGISTER_H
 #define NETWORK_STUDY_CLASS_REGISTER_H
+#include <functional>
 #include "class_factory.h"
 
 namespace yazi {
@@ -18,6 +19,10 @@ namespace yazi {
             ClassRegister(const std::string &class_name,const std::string &field_name,const std::string &field_type,size_t offset) {
                 Singleton<ClassFactory>::instance()->register_class_field(class_name,field_name,field_type,offset);
             }
+
+            ClassRegister(const std::string&class_name,const std::string&method_name,uintptr_t method) {
+                Singleton<ClassFactory>::instance()->register_class_method(class_name,method_name,method);
+            }
         };
         #define  REGISTER_CLASS(className)        \
             Object * createObject##className()    \
@@ -28,9 +33,13 @@ namespace yazi {
             }                                     \
             ClassRegister classRegister##className(#className,createObject##className)
 
-#define REGISTER_CLASS_FIELD(className,fieldName,fieldType)  \
-    className className##fieldName;                          \
-        ClassRegister classRegister##className##fieldName(#className,#fieldName,#fieldType,(size_t)(&(className##fieldName.fieldName))-(size_t)(&className##fieldName))\
+        #define REGISTER_CLASS_FIELD(className,fieldName,fieldType)  \
+            className className##fieldName;                          \
+            ClassRegister classRegister##className##fieldName(#className,#fieldName,#fieldType,(size_t)(&(className##fieldName.fieldName))-(size_t)(&className##fieldName))\
+
+        #define REGISTER_CLASS_METHOD(className,methodName,returnType,...)                                              \
+            std::function<returnType(className*,##__VA_ARGS__)> className##methodName##method = &className::methodName;  \
+            ClassRegister classRegister##className##methodName(#className,#methodName,(uintptr_t)&(className##methodName##method))
 
     }
 }

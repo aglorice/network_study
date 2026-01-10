@@ -43,7 +43,7 @@ ClassField *ClassFactory::get_class_field(const std::string &class_name, int pos
 }
 
 ClassField *ClassFactory::get_class_field(const std::string &class_name, const std::string &field_name) {
-    auto fields = m_class_field[class_name];
+    auto &fields = m_class_field[class_name];
     for (auto it = fields.begin();it!=fields.end();++it) {
         if ((*it)->name() == field_name) {
             return *it;
@@ -62,6 +62,33 @@ ClassField *Object::get_field(int pos) {
 
 int Object::get_field_count() {
     return Singleton<ClassFactory>::instance()->get_class_field_count(m_class_name);
+}
+
+void ClassFactory::register_class_method(const std::string &class_name, const std::string &method_name, uintptr_t method) {
+    m_class_method[class_name].push_back(new ClassMethod(method_name,method));
+}
+
+int ClassFactory::get_class_method_count(const std::string &class_name) {
+    return m_class_method[class_name].size();
+}
+
+
+ClassMethod *ClassFactory::get_class_method(const std::string &class_name, int pos) {
+    int size = (int)m_class_method[class_name].size();
+    if (pos < 0 || pos > size) {
+        return nullptr;
+    }
+    return m_class_method[class_name][pos];
+}
+
+ClassMethod *ClassFactory::get_class_method(const std::string &class_name, const std::string &method_name) {
+    auto &methods = m_class_method[class_name];
+    for (auto it = methods.begin();it != methods.end();++it) {
+        if ((*(it))->name() == method_name) {
+            return *it;
+        }
+    }
+    return nullptr;
 }
 
 

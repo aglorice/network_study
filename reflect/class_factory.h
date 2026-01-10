@@ -6,8 +6,10 @@
 #define NETWORK_STUDY_CLASS_FACTORY_H
 #include <string>
 #include <map>
+#include <functional>
 #include "../utility/singleton.h"
 #include "class_field.h"
+#include "class_method.h"
 
 using namespace yazi::utility;
 
@@ -29,6 +31,9 @@ namespace yazi {
 
             template<typename  T>
             void set(const std::string &field_name,const T &value);
+
+            template<typename R = void,typename ...Args>
+            R call(const std::string &method_name,Args&&... args);
         private:
             std::string m_class_name;
         };
@@ -47,9 +52,16 @@ namespace yazi {
             int get_class_field_count(const std::string &class_name);
             ClassField * get_class_field(const std::string &class_name,int pos);
             ClassField * get_class_field(const std::string &class_name,const std::string & field_name);
+
+            // register class method
+            void register_class_method(const std::string &clas_name,const std::string &method_name, uintptr_t method);
+            int get_class_method_count(const std::string &class_name);
+            ClassMethod *get_class_method(const std::string &class_name,int pos);
+            ClassMethod* get_class_method(const std::string&class_name,const std::string &method_name);
         private:
             std::map<std::string,create_object> m_class_map;
             std::map<std::string,std::vector<ClassField*>> m_class_field;
+            std::map<std::string,std::vector<ClassMethod*>> m_class_method;
         };
 
         template<typename T>
@@ -71,6 +83,19 @@ namespace yazi {
             size_t offset = field->offset();
             *((T*)((unsigned char *)(this) + offset)) = value;
         }
+
+        template<typename R, typename... Args>
+        R Object::call(const std::string &method_name, Args &&... args) {
+            ClassFactory* factory = Singleton<ClassFactory>::instance();
+            ClassMethod * method = factory->get_class_method(m_class_name,method_name);
+            if (method == nullptr) {
+                return R();
+            }
+            auto func = method->method();
+            typedef std::function<R(decltype(this),Args...args)> class_method;
+            return (*((class_method*)func))(this,args...);
+        }
+
 
 
     }

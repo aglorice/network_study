@@ -14,8 +14,8 @@ namespace yazi {
             ClassField(const std::string &name,const std::string &type,size_t offset): m_name(name),m_offset(offset),m_type(type){}
             ~ClassField() = default;
 
-            const std::string &name() const {return m_name;}
-            const std::string &type() const{return m_type;}
+            [[nodiscard]] const std::string &name() const {return m_name;}
+            [[nodiscard]] const std::string &type() const{return m_type;}
             size_t offset() const {return m_offset;}
         private:
             std::string m_name;
