@@ -1,4 +1,4 @@
-#include "fs/file.h"
+#include "fs/directory.h"
 #include <iostream>
 using namespace yazi::fs;
 
@@ -6,7 +6,7 @@ using namespace yazi::fs;
 
 
 int main(int argc,char *argv[]) {
-   File file("./../main.log");
-   std::cout << file.size() << std::endl;
+   Directory dir("/root/xxx/./../main.log");
+   std::cout << dir.path() << std::endl;
    return 0;
 }

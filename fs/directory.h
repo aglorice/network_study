@@ -16,6 +16,16 @@ namespace yazi {
 
             // 获取目录的路径
             std::string path() const;
+
+        public:
+            // 获取路径的分隔符
+            static char separator();
+
+            static bool is_absolute_path(const std::string &path);
+
+            static std::string normalize_path(const std::string &path);
+
+            static std::string adjust_path(const std::string & path);
         private:
             std::string m_path;
         };
