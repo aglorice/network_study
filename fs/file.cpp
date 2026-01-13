@@ -123,7 +123,7 @@ bool File::write(const std::string &data) {
     if (!ofs.is_open()) {
         return false;
     }
-    ofs.write(data.c_str(),data.size());
+    ofs.write(data.c_str(),(int)data.size());
     return true;
 }
 

@@ -47,13 +47,13 @@ namespace yazi {
             [[nodiscard]] int line() const;
 
             // 获取文件最后修改的时间
-            time_t time() const;
+            [[nodiscard]] time_t time() const;
 
             // 获取文件的大小
-            long size() const;
+            [[nodiscard]] long size() const;
 
             // 读取文件内容
-            std::string read() const;
+            [[nodiscard]] std::string read() const;
 
             // 写入文件
             bool write(const std::string &data);

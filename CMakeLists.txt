@@ -38,4 +38,6 @@ add_executable(network_study main.cpp
         reflect/class_method.h
         fs/file.h
         fs/file.cpp
+        fs/directory.h
+        fs/directory.cpp
 )
