@@ -5,6 +5,9 @@
 #ifndef NETWORK_STUDY_DIRECTORY_H
 #define NETWORK_STUDY_DIRECTORY_H
 #include <string>
+#include "../utility/string.h"
+
+using namespace yazi;
 
 namespace yazi {
     namespace fs {

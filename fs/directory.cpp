@@ -32,7 +32,9 @@ bool Directory::is_absolute_path(const std::string &path) {
     }
     char sep = Directory::separator();
     std::string filepath = path;
-
+#ifdef WIN32
+    std::replace(filepath.begin(),filepath.end(),'/',sep);
+#endif
 }
 
 
