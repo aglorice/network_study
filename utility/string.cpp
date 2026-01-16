@@ -66,7 +66,8 @@ std::vector<std::string> String::split(const std::string &input, const std::stri
 }
 
 std::vector<std::string> String::split(const std::string &input, char separator) {
-    return split(input,std::to_string(separator));
+    std::string temp(1,separator);
+    return split(input, temp);
 }
 
 std::string String::join(const std::vector<std::string> &input, const std::string &separator) {
@@ -81,7 +82,8 @@ std::string String::join(const std::vector<std::string> &input, const std::strin
 }
 
 std::string String::join(const std::vector<std::string> &input, char separator) {
-    return join(input,std::to_string(separator));
+    std::string temp(1,separator);
+    return join(input,temp);
 }
 
 bool String::has_suffix(const std::string &input, const std::string &suffix) {

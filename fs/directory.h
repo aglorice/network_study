@@ -6,8 +6,12 @@
 #define NETWORK_STUDY_DIRECTORY_H
 #include <string>
 #include "../utility/string.h"
-
-using namespace yazi;
+#include <iostream>
+#include <algorithm>
+#include <unistd.h>
+#include <dirent.h>
+#include <sys/stat.h>
+using namespace yazi::utility;
 
 namespace yazi {
     namespace fs {
@@ -19,6 +23,15 @@ namespace yazi {
 
             // 获取目录的路径
             std::string path() const;
+
+            // 创建一个空目录（含子目录）
+            bool create();
+
+            // 判断一个目录是否存在
+            bool exists() const;
+
+            // 删除一个目录
+            bool remove() const;
 
         public:
             // 获取路径的分隔符
