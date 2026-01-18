@@ -3,13 +3,13 @@
 //
 
 #include "file.h"
-
+#include "directory.h"
 #include <unistd.h>
 
 using namespace yazi::fs;
 
 File::File(const std::string &path) {
-    m_path = path;
+    m_path = Directory::normalize_path(path);
 }
 
 const std::string File::path() const {
@@ -21,7 +21,7 @@ const std::string File::dir() const {
     if (m_path.empty()) {
         return "";
     }
-    char sep = '/';
+    char sep = Directory::separator();
     size_t last = m_path.find_first_of(sep);
     if (last != std::string::npos) {
         return m_path.substr(0,last);
@@ -30,7 +30,14 @@ const std::string File::dir() const {
 }
 
 bool File::create() {
-    // todo
+    if (exists()) {
+        return false;
+    }
+    Directory tmp(dir());
+    if (!tmp.exists()) {
+        tmp.create();
+    }
+
     std::ofstream ofs(m_path);
     return ofs.is_open();
 }
@@ -44,7 +51,7 @@ bool File::rename(const std::string &path) {
     if (ret!=0) {
         return false;
     }
-    m_path = path;
+    m_path = Directory::normalize_path(path);
     return true;
 }
 
@@ -63,6 +70,10 @@ bool File::copy(const std::string &path) {
     std::ifstream ifs(m_path);
     if (ifs.fail()) {
         return true;
+    }
+    File dts(path);
+    if (!dts.exists()) {
+        dts.create();
     }
     std::ofstream ofs(path);
     if (ofs.fail()) {
@@ -106,6 +117,7 @@ time_t File::time() const {
     if (stat(m_path.c_str(),&info) != 0) {
         std::cerr << "stat file error" << m_path << std::endl;
     }
+    // todo 待实现获取时间
 }
 
 

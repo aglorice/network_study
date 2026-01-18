@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include "file.h"
 using namespace yazi::utility;
 
 namespace yazi {
@@ -31,7 +32,28 @@ namespace yazi {
             bool exists() const;
 
             // 删除一个目录
-            bool remove() const;
+            bool remove();
+
+            // 清空一个目录
+            void clear();
+
+            // 目录的重命名
+            bool rename(const std::string &path);
+
+            // 复制目录
+            bool copy(const std::string &path);
+
+            // 获取一个目录下的所有文件
+            std::vector<File> file() const;
+
+            // 获取目录下包含文件的数量
+            int count() const;
+
+            // 获取目录下以及子目录文件的行数
+            int line() const;
+
+            long size() const;
+
 
         public:
             // 获取路径的分隔符
@@ -42,6 +64,11 @@ namespace yazi {
             static std::string normalize_path(const std::string &path);
 
             static std::string adjust_path(const std::string & path);
+
+            int mkdir(const char * path);
+            int rmdir(const char * path);
+            int unlink(const char * path);
+            static char *getcwd(char *buf, int len);
         private:
             std::string m_path;
         };
