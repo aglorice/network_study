@@ -3,6 +3,10 @@ project(network_study)
 
 set(CMAKE_CXX_STANDARD 20)
 
+# 查找 Python 3.14
+find_package(Python 3.14 REQUIRED COMPONENTS Development)
+
+
 add_executable(network_study main.cpp
         utility/option.h
         utility/option.cpp
@@ -41,3 +45,7 @@ add_executable(network_study main.cpp
         fs/directory.h
         fs/directory.cpp
 )
+
+# 链接 Python 头文件和库
+target_include_directories(network_study PRIVATE ${Python_INCLUDE_DIRS})
+target_link_libraries(network_study PRIVATE ${Python_LIBRARIES})
