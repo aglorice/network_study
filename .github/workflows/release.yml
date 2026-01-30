@@ -1,0 +1,187 @@
+name: Multi-Platform Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # 当推送 v*.*.* 格式的标签时触发（如 v1.0.0）
+  workflow_dispatch:  # 允许手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  get-version:
+    name: Get Version Info
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          # 获取上一个标签
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          # 生成 changelog
+          if [ -z "$PREV_TAG" ]; then
+            echo "### Changes in ${{ steps.version.outputs.version }}" > changelog.md
+            echo "" >> changelog.md
+            echo "Initial release" >> changelog.md
+            echo "" >> changelog.md
+            git log --pretty=format:"- %s (%h)" >> changelog.md
+          else
+            echo "### Changes since $PREV_TAG" > changelog.md
+            echo "" >> changelog.md
+            git log ${PREV_TAG}..HEAD --pretty=format:"- %s (%h)" >> changelog.md
+          fi
+
+          echo "" >> changelog.md
+          echo "" >> changelog.md
+          echo "**Full commit list:**" >> changelog.md
+          git log ${PREV_TAG}..HEAD --pretty=format:"%h - %s" >> changelog.md || git log --pretty=format:"%h - %s" >> changelog.md
+
+          # 转换为单行以便输出
+          CHANGELOG_CONTENT=$(cat changelog.md | sed ':a;N;$!ba;s/\n/\\n/g')
+          echo "changelog=$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
+
+          # 也保存到文件供后续使用
+          cp changelog.md ${{ github.workspace }}/changelog.md
+
+      - name: Upload changelog
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: changelog.md
+
+  build:
+    name: Build on ${{ matrix.os }}
+    needs: get-version
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: network_study-linux
+            asset_name: network_study-linux-x86_64
+          - os: macos-latest
+            artifact_name: network_study-macos
+            asset_name: network_study-macos-x86_64
+          - os: windows-latest
+            artifact_name: network_study-windows
+            asset_name: network_study-windows-x86_64.exe
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-dev libpython3.11-dev cmake build-essential
+
+      - name: Install Python dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install python@3.11
+
+      - name: Install Python dependencies (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release -j
+
+      - name: Prepare artifact (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p artifacts
+          cp build/network_study artifacts/${{ matrix.artifact_name }}
+          chmod +x artifacts/${{ matrix.artifact_name }}
+
+      - name: Prepare artifact (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir artifacts
+          copy build\Release\network_study.exe artifacts\${{ matrix.artifact_name }}
+
+      - name: Download changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: changelog
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: artifacts/${{ matrix.artifact_name }}
+
+  release:
+    name: Create Release
+    needs: [get-version, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Download changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: changelog
+          path: .
+
+      - name: Display build info
+        run: |
+          echo "======================================"
+          echo "Release Version: ${{ needs.get-version.outputs.version }}"
+          echo "======================================"
+          echo ""
+          cat changelog.md
+          echo ""
+          echo "======================================"
+          echo "Build artifacts:"
+          ls -R artifacts
+          echo "======================================"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ needs.get-version.outputs.version }}
+          body_path: changelog.md
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/network_study-linux/network_study-linux
+            artifacts/network_study-macos/network_study-macos
+            artifacts/network_study-windows/network_study-windows
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
