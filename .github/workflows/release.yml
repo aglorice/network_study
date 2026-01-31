@@ -1,4 +1,4 @@
-name: Multi-Platform Build & Release
+name: macOS Build & Release
 
 on:
   push:
@@ -64,22 +64,9 @@ jobs:
           path: changelog.md
 
   build:
-    name: Build on ${{ matrix.os }}
+    name: Build on macOS
     needs: get-version
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        include:
-          - os: ubuntu-latest
-            artifact_name: network_study-linux
-            asset_name: network_study-linux-x86_64
-          - os: macos-latest
-            artifact_name: network_study-macos
-            asset_name: network_study-macos-x86_64
-          - os: windows-latest
-            artifact_name: network_study-windows
-            asset_name: network_study-windows-x86_64.exe
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
@@ -90,21 +77,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Python dependencies (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-dev libpython3.11-dev cmake build-essential
-
-      - name: Install Python dependencies (macOS)
-        if: matrix.os == 'macos-latest'
+      - name: Install Python dependencies
         run: |
           brew install python@3.11
-
-      - name: Install Python dependencies (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          python -m pip install --upgrade pip
 
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
@@ -112,18 +87,11 @@ jobs:
       - name: Build
         run: cmake --build build --config Release -j
 
-      - name: Prepare artifact (Linux/macOS)
-        if: runner.os != 'Windows'
+      - name: Prepare artifact
         run: |
           mkdir -p artifacts
-          cp build/network_study artifacts/${{ matrix.artifact_name }}
-          chmod +x artifacts/${{ matrix.artifact_name }}
-
-      - name: Prepare artifact (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          mkdir artifacts
-          copy build\Release\network_study.exe artifacts\${{ matrix.artifact_name }}
+          cp build/network_study artifacts/network_study-macos
+          chmod +x artifacts/network_study-macos
 
       - name: Download changelog
         uses: actions/download-artifact@v4
@@ -133,8 +101,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact_name }}
-          path: artifacts/${{ matrix.artifact_name }}
+          name: network_study-macos
+          path: artifacts/network_study-macos
 
   release:
     name: Create Release
@@ -176,9 +144,6 @@ jobs:
           body_path: changelog.md
           draft: false
           prerelease: false
-          files: |
-            artifacts/network_study-linux/network_study-linux
-            artifacts/network_study-macos/network_study-macos
-            artifacts/network_study-windows/network_study-windows
+          files: artifacts/network_study-macos/network_study-macos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
