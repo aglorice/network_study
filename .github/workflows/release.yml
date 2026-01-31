@@ -57,9 +57,6 @@ jobs:
           CHANGELOG_CONTENT=$(cat changelog.md | sed ':a;N;$!ba;s/\n/\\n/g')
           echo "changelog=$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
 
-          # 也保存到文件供后续使用
-          cp changelog.md ${{ github.workspace }}/changelog.md
-
       - name: Upload changelog
         uses: actions/upload-artifact@v4
         with:
