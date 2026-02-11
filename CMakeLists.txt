@@ -44,6 +44,14 @@ add_executable(network_study main.cpp
         fs/file.cpp
         fs/directory.h
         fs/directory.cpp
+        py/python.h
+        py/python.cpp
+        py/module.h
+        py/module.cpp
+        py/function.h
+        py/function.cpp
+        py/argument.h
+        py/argument.cpp
 )
 
 # 链接 Python 头文件和库
