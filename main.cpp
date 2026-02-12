@@ -10,9 +10,9 @@ int main() {
     py.run("print('hello world')");
     py.run("sys.path.append('./../script')");
     try {
-        auto module = Module("test1");
-        auto func = Function(module,"say");
-        func.call();
+        auto module = Module("test2");
+        auto func = Function(module,"add");
+        int ret = func.call<int>(1,2);
     }catch (std::exception & e) {
         std::cout << e.what() << std::endl;
         return 1;
