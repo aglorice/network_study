@@ -7,8 +7,12 @@
 #include <Python.h>
 #include <string>
 #include <stdexcept>
+
 #include "module.h"
 #include "function.h"
+#include "object.h"
+#include "class.h"
+#include "argument.h"
 namespace yazi {
     namespace py {
         class Python {

@@ -7,12 +7,14 @@
 #include <string>
 #include "module.h"
 #include "argument.h"
+#include "object.h"
 namespace yazi {
     namespace py {
         class Function {
         public:
             Function() = default;
             Function(const Module &module,const std::string &name);
+            Function(const Object &obj,const std::string &name);
             ~Function() = default;
 
             void call();

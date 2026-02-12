@@ -6,11 +6,12 @@
 #define NETWORK_STUDY_ARGUMENT_H
 #include <Python.h>
 #include <string>
-#include "function.h"
+
 namespace yazi {
     namespace py {
         class Argument {
             friend class Function;
+            friend class Object;
         public:
             Argument()  = default;
             ~Argument() = default;

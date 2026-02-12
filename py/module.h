@@ -12,6 +12,7 @@ namespace yazi {
     namespace py {
         class Module {
             friend class Function;
+            friend class Class;
         public:
             Module() = default;
             Module(const std::string &name);

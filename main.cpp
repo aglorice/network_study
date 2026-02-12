@@ -7,12 +7,13 @@ using namespace yazi::py;
 int main() {
     auto py = Python();
     py.run("import sys");
-    py.run("print('hello world')");
     py.run("sys.path.append('./../script')");
     try {
-        auto module = Module("test2");
-        auto func = Function(module,"add");
-        int ret = func.call<int>(1,2);
+        auto module = Module("test3");
+        Class cls(module,"Person");
+        Object object(cls,"jack",20);
+        auto func = Function(object,"foo");
+        func.call();
     }catch (std::exception & e) {
         std::cout << e.what() << std::endl;
         return 1;
