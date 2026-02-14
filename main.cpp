@@ -1,23 +1,24 @@
-#include "py/python.h"
-
+#include "utility/timer.h"
 #include <iostream>
+#include <string>
 
-using namespace yazi::py;
+using namespace yazi::utility;
 
+void foo() {
+    std::cout << "foo" << std::endl;
+}
+
+void bar(const std::string & name) {
+    std::cout << "bar : " << name << std::endl;
+}
 int main() {
-    auto py = Python();
-    py.run("import sys");
-    py.run("sys.path.append('./../script')");
-    try {
-        auto module = Module("test3");
-        Class cls(module,"Person");
-        Object object(cls,"jack",20);
-        auto func = Function(object,"foo");
-        func.call();
-    }catch (std::exception & e) {
-        std::cout << e.what() << std::endl;
-        return 1;
-    }
+
+    Timer t1(2);
+    Timer t2(3);
+
+    t1.start(1000,foo);
+    t2.start(1500,bar,"aglorice");
+    std::getchar(); // 要加上这个，不然主线程直接就退出了
     return 0;
 }
 

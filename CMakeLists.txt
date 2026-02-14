@@ -55,6 +55,8 @@ add_executable(network_study main.cpp
         py/class.cpp
         py/object.h
         py/object.cpp
+        utility/timer.h
+        utility/timer.cpp
 )
 
 # 链接 Python 头文件和库
