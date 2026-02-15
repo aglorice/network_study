@@ -9,12 +9,13 @@
 namespace yazi {
     namespace timer {
         class Timer {
+            friend class TimerManager;
         public:
             Timer();
             Timer(int repeat);
             ~Timer();
 
-            int64_t now();
+            static int64_t now();
 
             template<typename F,typename... Args>
             void callback(int milliseconds,F &&f,Args&&... args);

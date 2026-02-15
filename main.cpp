@@ -1,8 +1,8 @@
-#include "utility/timer.h"
+#include "timer/timer_manager.h"
 #include <iostream>
 #include <string>
 
-using namespace yazi::utility;
+using namespace yazi::timer;
 
 void foo() {
     std::cout << "foo" << std::endl;
@@ -13,12 +13,15 @@ void bar(const std::string & name) {
 }
 int main() {
 
-    Timer t1(2);
-    Timer t2(3);
+    auto mgr = yazi::utility::Singleton<TimerManager>::instance();
+    mgr->schedule(1000,foo);
 
-    t1.start(1000,foo);
-    t2.start(1500,bar,"aglorice");
-    std::getchar(); // 要加上这个，不然主线程直接就退出了
+    mgr->schedule(1500,bar,"aglorice");
+    while (true) {
+        mgr->update();
+    }
+
+
     return 0;
 }
 
