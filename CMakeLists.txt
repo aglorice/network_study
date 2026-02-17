@@ -6,6 +6,21 @@ set(CMAKE_CXX_STANDARD 20)
 # 查找 Python 3.14
 find_package(Python 3.14 REQUIRED COMPONENTS Development)
 
+add_executable(server
+        utility/logger.h
+        utility/logger.cpp
+        utility/singleton.h
+        socket/socket.h
+        socket/socket.cpp
+        server.cpp)
+
+add_executable(client
+        utility/logger.h
+        utility/logger.cpp
+        utility/singleton.h
+        socket/socket.h
+        socket/socket.cpp
+        client.cpp)
 
 add_executable(network_study main.cpp
         utility/option.h
@@ -61,6 +76,9 @@ add_executable(network_study main.cpp
         timer/timer.cpp
         timer/timer_manager.h
         timer/timer_manager.cpp
+        socket/socket.h
+        socket/socket.cpp
+        client.cpp
 )
 
 # 链接 Python 头文件和库
