@@ -12,6 +12,10 @@ add_executable(server
         utility/singleton.h
         socket/socket.h
         socket/socket.cpp
+        socket/server_socket.h
+        socket/server_socket.cpp
+        socket/client_socket.h
+        socket/client_socket.cpp
         server.cpp)
 
 add_executable(client
@@ -20,7 +24,11 @@ add_executable(client
         utility/singleton.h
         socket/socket.h
         socket/socket.cpp
-        client.cpp)
+        client.cpp
+        socket/server_socket.h
+        socket/server_socket.cpp
+        socket/client_socket.h
+        socket/client_socket.cpp)
 
 add_executable(network_study main.cpp
         utility/option.h
@@ -78,6 +86,10 @@ add_executable(network_study main.cpp
         timer/timer_manager.cpp
         socket/socket.h
         socket/socket.cpp
+        socket/server_socket.h
+        socket/server_socket.cpp
+        socket/client_socket.h
+        socket/client_socket.cpp
         client.cpp
 )
 
