@@ -23,7 +23,7 @@ namespace yazi {
         public:
             Socket();
             Socket(int sock_fd);
-            ~Socket();
+            virtual ~Socket();
 
             bool bind(const std::string &ip,int port);
             bool listen(int backlog);
@@ -40,7 +40,7 @@ namespace yazi {
             bool set_recv_buffer(int size);
             bool set_linger(bool active,int seconds);
             bool set_keepalive();
-            bool set_reuse_addr();
+            bool set_reuseaddr();
 
         protected:
             std::string m_ip;

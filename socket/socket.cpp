@@ -145,7 +145,7 @@ bool Socket::set_keepalive() {
     return true;
 }
 
-bool Socket::set_reuse_addr() {
+bool Socket::set_reuseaddr() {
     int flag = 1;
     if (setsockopt(m_sock_fd,SOL_SOCKET,SO_REUSEADDR,&flag,sizeof(flag))<0) {
         log_error("socket set_reuse_addr error: errno=%d errmsg=%s",errno,strerror(errno));
