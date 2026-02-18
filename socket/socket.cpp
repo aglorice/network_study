@@ -92,6 +92,68 @@ void Socket::close() {
     }
 }
 
+bool Socket::set_non_blocking() {
+    int flags = fcntl(m_sock_fd,F_GETFL,0);
+    if (flags < 0) {
+        log_error("socket set_non_blocking error: errno=%d, errmsg=%s",errno,strerror(errno));
+        return false;
+    }
+    flags |= O_NONBLOCK;
+    if (fcntl(m_sock_fd,F_SETFL,flags)<0) {
+        log_error("socket set_non_blocking error: errno=%d, errmsg=%s",errno,strerror(errno));
+        return true;
+    }
+    return true;
+}
+
+bool Socket::set_send_buffer(int size) {
+    int buff_size = size;
+    if (setsockopt(m_sock_fd,SOL_SOCKET,SO_SNDBUF,&buff_size,sizeof(buff_size))<0) {
+        log_error("socket set_send_buffer error: error=%d, errmsg=%s",errno,strerror(errno));
+        return false;
+    }
+    return true;
+}
+
+bool Socket::set_recv_buffer(int size) {
+    int buff_size = size;
+    if (setsockopt(m_sock_fd,SOL_SOCKET,SO_RCVBUF,&buff_size,sizeof(buff_size))<0) {
+        log_error("socket set_recv_buffer error: error=%d, errmsg=%s",errno,strerror(errno));
+        return false;
+    }
+    return true;
+}
+
+bool Socket::set_linger(bool active,int seconds) {
+    struct linger l;
+    std::memset(&l,0,sizeof(l));
+    l.l_onoff = active ? 1:0;
+    l.l_linger = seconds;
+    if (setsockopt(m_sock_fd,SOL_SOCKET,SO_LINGER,&l,sizeof(l))<0) {
+        log_error("socket set_linger error: errno=%d errmsg=%s",errno,strerror(errno));
+        return false;
+    }
+    return true;
+}
+
+bool Socket::set_keepalive() {
+    int flag = 1;
+    if (setsockopt(m_sock_fd,SOL_SOCKET,SO_KEEPALIVE,&flag,sizeof(flag))<0) {
+        log_error("socket set_keepalive error: errno=%d errmsg=%s",errno,strerror(errno));
+        return false;
+    }
+    return true;
+}
+
+bool Socket::set_reuse_addr() {
+    int flag = 1;
+    if (setsockopt(m_sock_fd,SOL_SOCKET,SO_REUSEADDR,&flag,sizeof(flag))<0) {
+        log_error("socket set_reuse_addr error: errno=%d errmsg=%s",errno,strerror(errno));
+        return false;
+    }
+    return true;
+}
+
 Socket::~Socket() {
     close();
 }

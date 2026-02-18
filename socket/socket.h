@@ -11,6 +11,7 @@
 #include <cstring>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 
 #include "../utility/logger.h"
 
@@ -33,6 +34,13 @@ namespace yazi {
             int recv(char *buf,int len);
 
             void close();
+
+            bool set_non_blocking();
+            bool set_send_buffer(int size);
+            bool set_recv_buffer(int size);
+            bool set_linger(bool active,int seconds);
+            bool set_keepalive();
+            bool set_reuse_addr();
 
         protected:
             std::string m_ip;
