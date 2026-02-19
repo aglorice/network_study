@@ -36,6 +36,7 @@ namespace yazi {
             int recv(char *buf,int len);
 
             void close();
+            void clear();
 
             bool set_non_blocking();
             bool set_send_buffer(int size);
