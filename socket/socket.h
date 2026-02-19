@@ -25,6 +25,8 @@ namespace yazi {
             Socket(int sock_fd);
             virtual ~Socket();
 
+            int fd() const;
+
             bool bind(const std::string &ip,int port);
             bool listen(int backlog);
             bool connect(const std::string&ip,int port);

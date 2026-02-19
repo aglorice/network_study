@@ -154,6 +154,10 @@ bool Socket::set_reuseaddr() {
     return true;
 }
 
+int Socket::fd() const {
+    return m_sock_fd;
+}
+
 Socket::~Socket() {
     close();
 }
