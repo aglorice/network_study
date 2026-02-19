@@ -16,6 +16,8 @@ add_executable(server
         socket/server_socket.cpp
         socket/client_socket.h
         socket/client_socket.cpp
+        socket/selector.h
+        socket/selector.cpp
         server.cpp)
 
 add_executable(client
@@ -28,7 +30,9 @@ add_executable(client
         socket/server_socket.h
         socket/server_socket.cpp
         socket/client_socket.h
-        socket/client_socket.cpp)
+        socket/client_socket.cpp
+        socket/selector.h
+        socket/selector.cpp)
 
 add_executable(network_study main.cpp
         utility/option.h
@@ -90,6 +94,8 @@ add_executable(network_study main.cpp
         socket/server_socket.cpp
         socket/client_socket.h
         socket/client_socket.cpp
+        socket/selector.h
+        socket/selector.cpp
         client.cpp
 )
 
