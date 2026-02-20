@@ -16,14 +16,12 @@ namespace yazi {
         public:
 
             void listen(const std::string &ip,int port);
-            void attach(Socket *socket);
-            void detach(Socket* socket);
-            void remove(Socket *socket);
+            void attach(int sock_fd);
+            void detach(int sock_fd);
             void handle(int timeout);
         private:
             Socket * m_server = nullptr;
             Selector m_selector;
-            std::map<int,Socket*> m_conn;
         };
     }
 }

@@ -14,14 +14,14 @@ namespace yazi {
         class EchoTask {
         public:
             EchoTask() = delete;
-            EchoTask(Socket *socket);
+            EchoTask(int sock_fd);
             ~EchoTask();
 
             bool run();
             void destroy();
 
         private:
-            Socket * m_socket;
+            int m_sock_fd = 0;
         };
     }
 }

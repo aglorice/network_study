@@ -15,27 +15,16 @@ void SocketHandler::listen(const std::string &ip, int port) {
 }
 
 
-void SocketHandler::attach(Socket *socket) {
-    m_selector.set(socket->fd());
-    m_conn[socket->fd()] = socket;
+void SocketHandler::attach(int sock_fd) {
+    m_selector.set(sock_fd);
 }
 
-void SocketHandler::detach(Socket *socket) {
-    m_selector.del(socket->fd());
-}
-
-void SocketHandler::remove(Socket *socket) {
-    detach(socket);
-    socket->close();
-    auto it = m_conn.find(socket->fd());
-    if (it!=m_conn.end()) {
-        m_conn.erase(it);
-    }
-    delete socket;
+void SocketHandler::detach(int sock_fd) {
+    m_selector.del(sock_fd);
 }
 
 void SocketHandler::handle(int timeout) {
-    attach(m_server);
+    attach(m_server->fd());
     while (true) {
         int ret = m_selector.select(timeout);
         if (ret < 0) {
@@ -56,18 +45,18 @@ void SocketHandler::handle(int timeout) {
                 if (connfd < 0) {
                     continue;
                 }
-                auto socket = new Socket(connfd);
-                attach(socket); // 处理逻辑的时候就先将这个socket移除监听队列；
+                Socket socket(connfd);
+                socket.set_non_blocking();
+                attach(connfd);
             }else {
                 // 否则客户端套接字可读
-                auto socket = m_conn[fd];
-                detach(socket);
+                detach(fd);
 
-                EchoTask task(socket);
+                EchoTask task(fd);
                 if (!task.run()) {
-                    remove(socket);
+                    ::close(fd);
                 }else {
-                    attach(socket);
+                    attach(fd);
                 }
             }
         }

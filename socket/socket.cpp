@@ -92,10 +92,6 @@ void Socket::close() {
     }
 }
 
-void Socket::clear() {
-    m_sock_fd = 0;
-}
-
 
 bool Socket::set_non_blocking() {
     int flags = fcntl(m_sock_fd,F_GETFL,0);
@@ -164,6 +160,6 @@ int Socket::fd() const {
 }
 
 Socket::~Socket() {
-    close();
+
 }
 
